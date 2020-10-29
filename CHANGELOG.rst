@@ -7,6 +7,13 @@
 :Copyright:
   © 2016-2020 Adélie Software and contributors.  NCSA open source license.
 
+1.1.0 (202?-??-??)
+
+string
+-----
+
+* Add __explicit_bzero_chk
+
 
 1.1 (202?-??-??)
 ================
