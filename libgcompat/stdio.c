@@ -84,6 +84,8 @@ char *__fgets_unlocked_chk(char *s, size_t slen, int n, FILE *stream)
  * Open a stream.
  */
 
+#ifdef LINKER
+
 ssize_t readlink(const char *path, char *buf, size_t len);
 static FILE *(*real_fopen)(const char *, const char *);
 
@@ -106,6 +108,8 @@ FILE *fopen(const char *restrict pathname, const char *restrict mode)
 	}
 	return real_fopen(pathname, mode);
 }
+
+#endif
 
 /**
  * Convert formatted output, with stack checking.

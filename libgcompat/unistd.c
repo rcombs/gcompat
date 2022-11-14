@@ -184,6 +184,8 @@ int group_member(gid_t gid)
 	return 0;
 }
 
+#ifdef LINKER
+
 #ifndef LOADER
 #error LOADER must be defined
 #endif
@@ -245,6 +247,8 @@ int execvp(const char *file, char *const argv[]) {
 	}
 	return real_execvp(file, argv);
 }
+
+#endif
 
 int __close(int fd)
 {

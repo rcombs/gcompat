@@ -47,6 +47,10 @@ LOADER_OBJ = ${LOADER_SRC:.c=.o}
 LOADER_NAME = ld-linux.so.2
 LOADER_PATH = /lib/${LOADER_NAME}
 
+ifdef LINKER_PATH
+LINKER_ARG = -DLINKER='"${LINKER_PATH}"'
+endif
+
 PKG_CONFIG ?= pkg-config
 
 ifdef WITH_LIBUCONTEXT
@@ -66,7 +70,10 @@ OBSTACK_CFLAGS = $(shell ${PKG_CONFIG} --cflags ${WITH_OBSTACK}) -DWITH_OBSTACK
 OBSTACK_LIBS   = $(shell ${PKG_CONFIG} --libs ${WITH_OBSTACK})
 endif
 
-all: ${LIBGCOMPAT_NAME} ${LOADER_NAME}
+all: ${LIBGCOMPAT_NAME}
+ifdef LINKER_PATH
+all: ${LOADER_NAME}
+endif
 
 ${LIBGCOMPAT_NAME}: ${LIBGCOMPAT_OBJ}
 	${CC} ${CFLAGS} ${LDFLAGS} -shared -Wl,-soname,${LIBGCOMPAT_NAME} \
@@ -81,7 +88,7 @@ ${LOADER_NAME}: ${LOADER_OBJ}
 .c.o:
 	${CC} ${CPPFLAGS} ${CFLAGS} -c -D_BSD_SOURCE \
 		-DLIBGCOMPAT='"${LIBGCOMPAT_PATH}"' \
-		-DLINKER='"${LINKER_PATH}"' -DLOADER='"${LOADER_NAME}"' \
+		${LINKER_ARG} -DLOADER='"${LOADER_NAME}"' \
 		-fPIC -Ilibgcompat -std=c99 \
 		-Wall -Wextra -Wno-frame-address -Wno-unused-parameter \
 		${LIBUCONTEXT_CFLAGS} ${OBSTACK_CFLAGS} -o $@ $<
@@ -92,8 +99,10 @@ clean:
 format:
 	clang-format -i ${LIBGCOMPAT_INCLUDE} ${LIBGCOMPAT_SRC} ${LOADER_SRC}
 
-install: all
+install: ${LIBGCOMPAT_NAME}
 	install -D -m755 ${LIBGCOMPAT_NAME} ${DESTDIR}/${LIBGCOMPAT_PATH}
+ifdef LINKER_PATH
 	install -D -m755 ${LOADER_NAME} ${DESTDIR}/${LOADER_PATH}
+endif
 
 .PHONY: all clean format install

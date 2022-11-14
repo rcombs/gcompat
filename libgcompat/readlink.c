@@ -7,9 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifndef LINKER
-#error LINKER must be defined
-#endif
+#ifdef LINKER
 
 static char exe[PATH_MAX], *linker;
 static ssize_t (*real_readlink)(const char *, char *, size_t);
@@ -86,3 +84,5 @@ ssize_t readlink(const char *path, char *buf, size_t len)
 
 	return real_readlink(path, buf, len);
 }
+
+#endif

@@ -7,9 +7,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifndef LINKER
-#error LINKER must be defined
-#endif
+#ifdef LINKER
 
 static char *(*real_realpath)(const char *restrict, char *restrict);
 
@@ -49,3 +47,5 @@ char *realpath(const char *restrict path, char *restrict resolved)
 
 	return real_realpath(path, resolved);
 }
+
+#endif
